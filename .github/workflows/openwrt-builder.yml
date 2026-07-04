@@ -95,7 +95,10 @@ jobs:
       run: |
         cd openwrt
         # Fix RTL8365MB: field_get -> FIELD_GET for kernel 6.12+
-        find . -path "*/drivers/net/dsa/realtek/rtl8365mb*.c" -exec sed -i 's/field_get(/FIELD_GET(/g' {} \+ 2>/dev/null || true
+        # find in build_dir before compilation starts
+        find build_dir -path "*/drivers/net/dsa/realtek/rtl8365mb*.c" -exec sed -i 's/\bfield_get(/FIELD_GET(/g' {} \+ 2>/dev/null || true
+        # also patch directly in the kernel tree source (if symlinked)
+        find target/linux -path "*/drivers/net/dsa/realtek/rtl8365mb*.c" -exec sed -i 's/\bfield_get(/FIELD_GET(/g' {} \+ 2>/dev/null || true
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
         echo "status=success" >> $GITHUB_OUTPUT
