@@ -18,3 +18,7 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 
 # Modify hostname
 sed -i 's/OpenWrt/HT2/g' package/base-files/files/bin/config_generate
+
+# Disable RTL8365MB DSA driver — HT2 doesn't use it, and it breaks on kernel 6.12 (field_get removed)
+sed -i 's/CONFIG_NET_DSA_REALTEK_RTL8365MB=m/# CONFIG_NET_DSA_REALTEK_RTL8365MB is not set/' target/linux/rockchip/armv8/config-*/kernel-config 2>/dev/null || true
+sed -i '/^CONFIG_NET_DSA_REALTEK_RTL8365MB/d' target/linux/rockchip/armv8/config-* 2>/dev/null || true
